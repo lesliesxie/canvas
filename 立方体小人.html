@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .cuboid {
+      transform-style: preserve-3d; /* 使得所有子元素在3D空间中呈现 */
+      transform: rotateX(-10deg) rotateY(10deg) translate(200px,200px);
+    }
+    .cuboid div {
+      width: 360px;
+      position: absolute;
+      /* opacity: 0.5; 半透明效果方便查看绘制情况 */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .back {
+      height: 280px;
+      background-color: #cfcec9;
+      transform: rotateY(180deg) translateZ(120px);
+      
+    }
+    .right {
+      height: 280px;
+      width: 250px !important;
+      background-color: #cfcec9;
+      transform: rotateY(90deg) translateZ(235px);
+      
+    }
+    /* .left {
+      height: 280px;
+      width: 240px !important;
+      background-color: #00FF99;
+      transform: rotateY(-90deg) translateZ(120px);
+    }
+    .top {
+      height: 240px;
+      background-color: #0099FF;
+      transform: rotateX(90deg) translateZ(120px);
+    } */
+    .bottom {
+      height: 250px;
+      background-color: #cfcec9;
+      transform: rotateX(-90deg) translateZ(155px);
+    }
+    /* .front {
+      height: 280px;
+      background-color: #FF5757;
+      transform: rotateY(0deg) translateZ(120px);
+    } */
+    /* #canvas1 {
+      width: 360;
+      height: 250;
+    } */
+  </style>
+</head>
+<body>
+  <div class="cuboid">
+    <div style="margin-top: 10px;"><canvas id="canvas"></canvas></div>
+    <div class="bottom"><canvas id="canvas1"></canvas></div>
+    <!-- <div class="top">上</div> -->
+    <div class="right"><canvas id="canvas2"></canvas></div>
+    <!-- <div class="left">左</div> -->
+    <div class="back"><canvas id="canvas3"></canvas></div>
+    <!-- <div class="front">前</div> -->
+  </div>
+</body>
+<script>
+  let canvas1 = document.getElementById('canvas1')
+  canvas1.width = 360
+  canvas1.height = 250
+  let ctx1 = canvas1.getContext('2d')
+  for(let i = 0; i < 7; i++) {
+    ctx1.beginPath()
+    ctx1.moveTo(51.43 * i, 0)
+    ctx1.lineTo(51.43 * i, 250)
+    ctx1.strokeStyle = '#524f49'
+    ctx1.stroke()
+    ctx1.closePath()
+  }
+  for(let i = 0; i < 8; i++) {
+    ctx1.beginPath()
+    ctx1.moveTo(0, 35.71 * i)
+    ctx1.lineTo(360, 35.71 * i)
+    ctx1.strokeStyle = '#524f49'
+    ctx1.stroke()
+    ctx1.closePath()
+  }
+  let canvas2 = document.getElementById('canvas2')
+  canvas2.width = 250
+  canvas2.height = 280
+  let ctx2 = canvas2.getContext('2d')
+  for(let i = 0; i < 7; i++) {
+    ctx2.beginPath()
+    ctx2.moveTo(35.71 * i, 0)
+    ctx2.lineTo(35.71 * i, 280)
+    ctx2.strokeStyle = '#524f49'
+    ctx2.stroke()
+    ctx2.closePath()
+  }
+  for(let i = 0; i < 4; i++) {
+    ctx2.beginPath()
+    ctx2.moveTo(0, 93.33 * i)
+    ctx2.lineTo(240, 93.33 * i)
+    ctx2.strokeStyle = '#524f49'
+    ctx2.stroke()
+    ctx2.closePath()
+  }
+  let canvas3 = document.getElementById('canvas3')
+  canvas3.width = 360
+  canvas3.height = 280
+  let ctx3 = canvas3.getContext('2d')
+  for(let i = 0; i < 8; i++) {
+    ctx3.beginPath()
+    ctx3.moveTo(51.43 * i, 0)
+    ctx3.lineTo(51.43 * i, 280)
+    ctx3.strokeStyle = '#524f49'
+    ctx3.stroke()
+    ctx3.closePath()
+  }
+  for(let i = 0; i < 4; i++) {
+    ctx3.beginPath()
+    ctx3.moveTo(0, 93.33 * i)
+    ctx3.lineTo(360, 93.33 * i)
+    ctx3.strokeStyle = '#524f49'
+    ctx3.stroke()
+    ctx3.closePath()
+  }
+
+
+  let canvas = document.getElementById('canvas')
+  canvas.width = 300
+  canvas.height = 300
+  canvas.style.position = 'relative'
+  let ctx = canvas.getContext('2d')
+  ctx.beginPath()
+  ctx.arc(150, 60, 3, 0, 3 * Math.PI)
+  ctx.arc(150, 75, 4, 0, 3 * Math.PI)
+  ctx.fillStyle = 'red'
+  ctx.fill()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.moveTo(150, 60)
+  ctx.lineTo(150, 75)
+  ctx.strokeStyle = 'red'
+  ctx.stroke()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.arc(145, 74, 3, 0, 3 * Math.PI)
+  ctx.arc(155, 74, 3, 0, 3 * Math.PI)
+  ctx.fillStyle = 'red'
+  ctx.fill()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.moveTo(150, 75)
+  ctx.lineTo(145, 74)
+  ctx.strokeStyle = 'red'
+  ctx.stroke()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.moveTo(150, 75)
+  ctx.lineTo(155, 74)
+  ctx.strokeStyle = 'red'
+  ctx.stroke()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.arc(135, 100, 3, 0, 3 * Math.PI)
+  ctx.arc(150, 100, 3, 0, 3 * Math.PI)
+  ctx.arc(165, 100, 3, 0, 3 * Math.PI)
+  ctx.fillStyle = 'red'
+  ctx.fill()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.moveTo(135, 100)
+  ctx.lineTo(150, 100)
+  ctx.lineTo(165, 100)
+  ctx.strokeStyle = 'blue'
+  ctx.stroke()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.arc(140, 180, 3, 0, 3 * Math.PI)
+  ctx.arc(150, 180, 3, 0, 3 * Math.PI)
+  ctx.arc(160, 180, 3, 0, 3 * Math.PI)
+  ctx.fillStyle = 'red'
+  ctx.fill()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.moveTo(140, 180)
+  ctx.lineTo(150, 180)
+  ctx.lineTo(160, 180)
+  ctx.strokeStyle = 'blue'
+  ctx.stroke()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.arc(140, 210, 3, 0, 3 * Math.PI)
+  ctx.arc(142, 250, 3, 0, 3 * Math.PI)
+  ctx.fillStyle = 'red'
+  ctx.fill()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.moveTo(135, 100)
+  ctx.lineTo(140, 180)
+  ctx.lineTo(140, 210)
+  ctx.lineTo(142, 250)
+  ctx.lineTo(138, 265)
+  ctx.strokeStyle = 'blue'
+  ctx.stroke()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.moveTo(142, 250)
+  ctx.lineTo(147, 260)
+  ctx.strokeStyle = 'blue'
+  ctx.stroke()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.arc(138, 265, 3, 0, 3 * Math.PI)
+  ctx.arc(147, 260, 3, 0, 3 * Math.PI)
+  ctx.fillStyle = 'red'
+  ctx.fill()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.arc(160, 210, 3, 0, 3 * Math.PI)
+  ctx.arc(158, 250, 3, 0, 3 * Math.PI)
+  ctx.fillStyle = 'red'
+  ctx.fill()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.moveTo(165, 100)
+  ctx.lineTo(160, 180)
+  ctx.lineTo(160, 210)
+  ctx.lineTo(158, 250)
+  ctx.lineTo(155, 260)
+  ctx.strokeStyle = 'blue'
+  ctx.stroke()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.moveTo(158, 250)
+  ctx.lineTo(166, 265)
+  ctx.strokeStyle = 'blue'
+  ctx.stroke()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.arc(155, 260, 3, 0, 3 * Math.PI)
+  ctx.arc(166, 265, 3, 0, 3 * Math.PI)
+  ctx.fillStyle = 'red'
+  ctx.fill()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.arc(133, 120, 3, 0, 3 * Math.PI)
+  ctx.arc(128, 140, 3, 0, 3 * Math.PI)
+  ctx.fillStyle = 'red'
+  ctx.fill()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.moveTo(135, 100)
+  ctx.lineTo(133, 120)
+  ctx.lineTo(128, 140)
+  ctx.strokeStyle = 'blue'
+  ctx.stroke()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.arc(167, 120, 3, 0, 3 * Math.PI)
+  ctx.arc(172, 140, 3, 0, 3 * Math.PI)
+  ctx.fillStyle = 'red'
+  ctx.fill()
+  ctx.closePath()
+  ctx.beginPath()
+  ctx.moveTo(165, 100)
+  ctx.lineTo(167, 120)
+  ctx.lineTo(172, 140)
+  ctx.strokeStyle = 'blue'
+  ctx.stroke()
+  ctx.closePath()
+</script>
+</html>
