@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.2.1/exceljs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</head>
+<body>
+  文件：<br>
+  <input accept=".xlsx" type="file" id="file"><br>
+  <button onclick="createReportFile()">导出模板</button>
+</body>
+<script>
+  const input = document.querySelector('#file')
+  input.addEventListener('change',(e) => {
+    const reader = new FileReader();
+    reader.onload = async(evt) => {
+      const lines = await readExcel(evt.target.result);
+      lines.forEach((line) => {
+        console.log(line);
+        // 数据处理
+      });
+      // input.value=''//读取后清空input file
+    };
+    reader.readAsBinaryString(e.target.files[0]);
+  })
+
+  const readExcel = (file) => {
+    return new Promise(async(resolve,reject)=>{
+      try{
+        //
+        const workbook = new ExcelJS.Workbook();
+        //await workbook.xlsx.readFile(filename);从文件读取
+        //await workbook.xlsx.read(stream);从流读取
+        //await workbook.xlsx.load(data);从 buffer 加载
+        const result = await workbook.xlsx.load(file);
+        // 按 name 提取工作表 workbook.getWorksheet('My Sheet');
+        // 按 id 提取工作表 workbook.getWorksheet(1);
+        const worksheet = result.getWorksheet();
+        const lines = []
+        //遍历工作表中具有值的所有行
+        worksheet.eachRow(function(row) {
+          const [empty,...line] = row.values
+          if(line.filter(f=>f).length>0){
+            lines.push(line.map(m=>m?m.toString():''))
+          }
+        });
+        let newLines = lines.slice(5)
+        console.log(newLines);
+        resolve(newLines)
+      }catch(e){
+        reject(e)
+      }
+    })
+  };
+  const jsonData = {
+    "filename": "我的报表",
+    "sheetName": "sheet1",
+    "sheetDescript": [
+      "人口统计",
+      "创建人: https://guofengs.com",
+      "创建时间: 2019/12/03",
+      "统计时间范围: 2019/12/03~2019/12/31"
+    ],
+    "header": [
+      {
+        "id": "id"
+      },
+      {
+        "name": "名字"
+      },
+      {
+        "email": "电子邮件"
+      },
+      {
+        "addr": "地址"
+      }
+    ],
+    "contentLists": [
+      {
+        "id": "1",
+        "name": "张三",
+        "email": "1@zs.com",
+        "addr": "上海市浦东新区"
+      },
+      {
+        "id": "2",
+        "name": "李四",
+        "email": "1@ls.com",
+        "addr": "上海市浦东新区"
+      },
+      {
+        "id": "3",
+        "name": "王五",
+        "email": "1@ww.com",
+        "addr": "上海市浦东新区"
+      },
+
+      {
+        "id": "3",
+        "name": "赵六",
+        "email": "1@zl.com",
+        "addr": "上海市浦东新区"
+      }
+    ]
+
+  }
+  const COLOR = {
+    BLUE: "9BC2E6",
+    GREEN: "A9D08E",
+    REPORT: "9BC2E6"
+  }
+
+
+function GetFileStyle(sheet) {
+	// 合并单元格
+	this.setMerge = function (rows, columns) {
+		let char = String.fromCharCode(64 + columns)
+		for (let i = 1; i <= rows; i++) {
+			sheet.mergeCells(`A${i}:${char}${i}`);
+		}
+		return this;
+	}
+
+	// 设置通用值 type = 1 desc, type = 2 header, 3 type
+	this.setGeneralValue = function (type, numberLine, params) {
+		switch (type) {
+			case 1:
+				this.setDesc(numberLine, params);
+				break;
+			case 2:
+				this.setHeader(numberLine, params);
+				break;
+			case 3:
+				this.setContent(numberLine, params)
+			default:
+				break;
+		}
+		return this;
+	}
+
+	// 垂直插值
+	this.setDesc = function (numberLines, value) {
+		let item = null;
+		for (let i = 0, length = value.length; i < length; i++) {
+			item = value[i];
+			sheet.getCell(`A${i + 1}`).value = item;
+		}
+		return this
+	}
+
+	// 设置header
+	this.setHeader = function (numberLines, value) {
+		let keys = []
+		for (let i = 0, length = value.length; i < length; i++) {
+			let currentLines = numberLines ? numberLines : sheet.rowCount + 1;
+			let columnsChar = String.fromCharCode(64 + i + 1);
+			let cellNumbers = `${columnsChar}${currentLines}`;
+			let item = value[i];
+			for (let its in item) {
+				keys.push({
+					key: its,
+					width: 18
+				})
+				sheet.getCell(cellNumbers).value = item[its];
+			}
+		}
+		sheet.columns = keys
+		return this
+	}
+
+	// 设置内容
+	this.setContent = function (numberLines, value) {
+		sheet.addRows(value)
+		return this;
+	}
+
+	// 设置字体是否居中
+	this.setAlignment = function (cell, verticalValue, horizontalValue) {
+		sheet.getCell(cell).alignment = {vertical: verticalValue, horizontal: horizontalValue}
+		return this;
+	}
+
+	// 设置字体大小
+	this.setFontSize = function (cell) {
+		sheet.getCell(cell).font = {
+			color: { argb: "FF0000" },
+			family: 2,
+			size: 14,
+			bold: true
+		};
+		return this;
+	}
+
+	// 设置背景色
+	this.setBackgroundColor = function (cell, color) {
+		sheet.getCell(cell).fill = {
+			type: 'pattern',
+			pattern: 'solid',
+			fgColor: {
+				argb: `FF${color}`
+			}
+		};
+		return this;
+	}
+
+	// 设置表格边框
+	this.setBorderStyle = function (top, right, bottom, left, color, columns, rows) {
+		for (let i = 1; i <= columns; i++) {
+
+			let char = String.fromCharCode(64 + i)
+			console.log(`${char}${rows}`)
+			sheet.getCell(`${char}${rows}`).border = {
+				top: {
+					style: top,
+					color: {
+						argb: `FF${color}`
+					}
+				},
+				left: {
+					style: top,
+					color: {
+						argb: `FF${color}`
+					}
+				},
+				bottom: {
+					style: top,
+					color: {
+						argb: `FF${color}`
+					}
+				},
+				right: {
+					style: top,
+					color: {
+						argb: `FF${color}`
+					}
+				}
+			};
+		}
+		return this;
+	}
+	this.setBorderRightStyle = function () {
+		for (let i = 1; i <= 5; i++) {
+			sheet.getCell(`A${i}`).border = {
+				right: {
+					style: "thin",
+					color: {
+						argb: `FF000000`
+					}
+				}
+			};
+		}
+		return this;
+	}
+
+	return this
+}
+
+
+function createReportFile() {
+	let {
+		filename,
+		sheetName,
+		sheetDescript,
+		header,
+		contentLists
+	} = jsonData;
+
+	let length = header.length || 4
+	let workbook = new ExcelJS.Workbook();
+	let sheet = workbook.addWorksheet(sheetName, {views:[{state: 'frozen', xSplit: 4, ySplit:6}]});
+  sheet.getCell('A1').protection = {
+    locked: true
+  }
+	let getFileObj = new GetFileStyle(sheet)
+	getFileObj
+		.setGeneralValue(1, null, sheetDescript)
+		.setGeneralValue(2, 6, header)
+		.setGeneralValue(3, null, contentLists)
+		.setFontSize("A1")
+		.setBorderStyle("thin", "thin", "thin", "thin", "000000", length,6)
+		.setBorderRightStyle()
+		.setMerge(5, length)
+		.setBackgroundColor("A1", COLOR.GREEN)
+		.setAlignment("A1", "middle", "center");
+    const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+                workbook.xlsx.writeBuffer(`${filename}.xlsx`).then((data) => {
+                const blob = new Blob([data], {
+                    type: EXCEL_TYPE
+                });
+                saveAs(blob, `${filename}.xlsx`);
+            });
+}
+
+</script>
+</html>
